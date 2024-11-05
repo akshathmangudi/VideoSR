@@ -9,7 +9,7 @@ We will be comparing objective metrics for visual quality evaluation. This will 
 
 Here's the table converted to markdown format:
 
-| Sequence Name | Metric | VESPCN | SOFVSR | DUF | Ours |
+| Sequence Name | Metric | VESPCN | SOFVSR | DUF | EGVSR |
 |--------------|--------|---------|---------|-----|------|
 | Calendar | PSNR↑ | 14.67 | 18.39 | 23.59 | 23.60 |
 | | SSIM↑ | 0.19 | 0.50 | 0.80 | 0.80 |
