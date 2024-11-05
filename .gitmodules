@@ -1,9 +1,3 @@
 [submodule "TecoGAN"]
 	path = TecoGAN
 	url = https://github.com/thunil/TecoGAN.git
-[submodule "ESPCN"]
-	path = ESPCN
-	url = https://github.com/leftthomas/ESPCN.git
-[submodule "EGVSR"]
-	path = EGVSR
-	url = https://github.com/Thmen/EGVSR.git

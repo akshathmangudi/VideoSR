@@ -5,9 +5,41 @@ import zipfile
 import logging
 import functools
 import numpy as np
+from math import log10
 import os.path as osp
 import torch.nn as nn
+from os import listdir
+from PIL import Image
+import tqdm as tqdm
+from os.path import join
+from torchnet.meter import meter
 import torch.nn.functional as F
+from torch.utils.data.dataset import Dataset
+from torchvision.transforms import Compose, CenterCrop, Scale
+
+
+class PSNRMeter(meter.Meter):
+    def __init__(self):
+        super(PSNRMeter, self).__init__()
+        self.reset()
+
+    def reset(self):
+        self.n = 0
+        self.sesum = 0.0
+
+    def add(self, output, target):
+        if not torch.is_tensor(output) and not torch.is_tensor(target):
+            output = torch.from_numpy(output)
+            target = torch.from_numpy(target)
+        output = output.cpu()
+        target = target.cpu()
+        self.n += output.numel()
+        self.sesum += torch.sum((output - target) ** 2)
+
+    def value(self):
+        mse = self.sesum / max(1, self.n)
+        psnr = 10 * log10(1 / mse)
+        return psnr
 
 
 class BicubicUpsample(nn.Module):
@@ -64,6 +96,35 @@ class BicubicUpsample(nn.Module):
             n, c, s, h * s, -1).permute(0, 1, 3, 4, 2).reshape(n, c, h * s, -1)
 
         return output
+
+
+class DatasetFromFolder(Dataset):
+    def __init__(self, dataset_dir, upscale_factor, input_transform=None, target_transform=None):
+        super(DatasetFromFolder, self).__init__()
+        self.image_dir = dataset_dir + '/SRF_' + str(upscale_factor) + '/data'
+        self.target_dir = dataset_dir + '/SRF_' + \
+            str(upscale_factor) + '/target'
+        self.image_filenames = [join(self.image_dir, x) for x in listdir(
+            self.image_dir) if is_image_file(x)]
+        self.target_filenames = [join(self.target_dir, x) for x in listdir(
+            self.target_dir) if is_image_file(x)]
+        self.input_transform = input_transform
+        self.target_transform = target_transform
+
+    def __getitem__(self, index):
+        image, _, _ = Image.open(
+            self.image_filenames[index]).convert('YCbCr').split()
+        target, _, _ = Image.open(
+            self.target_filenames[index]).convert('YCbCr').split()
+        if self.input_transform:
+            image = self.input_transform(image)
+        if self.target_transform:
+            target = self.target_transform(target)
+
+        return image, target
+
+    def __len__(self):
+        return len(self.image_filenames)
 
 
 class STN(nn.Module):
@@ -149,6 +210,31 @@ class CoarseFineFlownet(nn.Module):
             torch.cat((ref, target, flow_c, wc), 1)) + flow_c
         flow_f *= gain
         return flow_f
+
+
+def is_image_file(filename):
+    return any(filename.endswith(extension) for extension in ['.png', '.jpg', '.jpeg', '.JPG', '.JPEG', '.PNG'])
+
+
+def is_video_file(filename):
+    return any(filename.endswith(extension) for extension in ['.mp4', '.avi', '.mpg', '.mkv', '.wmv', '.flv'])
+
+
+def calculate_valid_crop_size(crop_size, upscale_factor):
+    return crop_size - (crop_size % upscale_factor)
+
+
+def input_transform(crop_size, upscale_factor):
+    return Compose([
+        CenterCrop(crop_size),
+        Scale(crop_size // upscale_factor, interpolation=Image.BICUBIC)
+    ])
+
+
+def target_transform(crop_size):
+    return Compose([
+        CenterCrop(crop_size)
+    ])
 
 
 def download_file(url, path, logger):
@@ -355,3 +441,34 @@ def retrieve_files(dir, suffix='png|jpg'):
     file_lst.sort()
 
     return file_lst
+
+
+def generate_dataset(data_type, upscale_factor):
+    images_name = [x for x in listdir(
+        'data/VOC2012/' + data_type) if is_image_file(x)]
+    crop_size = calculate_valid_crop_size(256, upscale_factor)
+    lr_transform = input_transform(crop_size, upscale_factor)
+    hr_transform = target_transform(crop_size)
+
+    root = 'data/' + data_type
+    if not os.path.exists(root):
+        os.makedirs(root)
+    path = root + '/SRF_' + str(upscale_factor)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    image_path = path + '/data'
+    if not os.path.exists(image_path):
+        os.makedirs(image_path)
+    target_path = path + '/target'
+    if not os.path.exists(target_path):
+        os.makedirs(target_path)
+
+    for image_name in tqdm(images_name, desc='generate ' + data_type + ' dataset with upscale factor = '
+                           + str(upscale_factor) + ' from VOC2012'):
+        image = Image.open('data/VOC2012/' + data_type + '/' + image_name)
+        target = image.copy()
+        image = lr_transform(image)
+        target = hr_transform(target)
+
+        image.save(image_path + '/' + image_name)
+        target.save(target_path + '/' + image_name)
