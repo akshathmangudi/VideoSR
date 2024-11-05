@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 from torchnet.engine import Engine
 from torchnet.logger import VisdomPlotLogger
 from tqdm import tqdm
-from models.espcn import Net
+from models.net import Net
 from utils import DatasetFromFolder, PSNRMeter
 
 
