@@ -1,0 +1,3 @@
+[submodule "EGVSR"]
+	path = EGVSR
+	url = https://github.com/Thmen/EGVSR.git

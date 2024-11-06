@@ -212,6 +212,24 @@ class CoarseFineFlownet(nn.Module):
         return flow_f
 
 
+class ResidualBlock(nn.Module):
+    """ Residual block without batch normalization
+    """
+
+    def __init__(self, nf=64):
+        super(ResidualBlock, self).__init__()
+
+        self.conv = nn.Sequential(
+            nn.Conv2d(nf, nf, 3, 1, 1, bias=True),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(nf, nf, 3, 1, 1, bias=True))
+
+    def forward(self, x):
+        out = self.conv(x) + x
+
+        return out
+
+
 def is_image_file(filename):
     return any(filename.endswith(extension) for extension in ['.png', '.jpg', '.jpeg', '.JPG', '.JPEG', '.PNG'])
 
