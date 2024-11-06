@@ -4,6 +4,119 @@ As part of our Deep Learning project, our problem statement was benchmarking dif
 
 These are the benchmarks adopted from the parent repository, which have been added as a submodule inside this repo. 
 
+## Project Tree: 
+```
+.
+├── config.py
+├── data
+│   ├── base.py
+│   ├── __init__.py
+│   ├── paired.py
+│   └── unpaired.py
+├── LICENSE
+├── metrics
+│   ├── evaluate.py
+│   ├── __init__.py
+│   ├── LPIPS
+│   │   ├── metrics.py
+│   │   ├── models
+│   │   │   ├── base.py
+│   │   │   ├── dist.py
+│   │   │   ├── __init__.py
+│   │   │   ├── networks.py
+│   │   │   ├── pretrained.py
+│   │   │   ├── util.py
+│   │   │   └── v0.1
+│   │   │       ├── alex.pth
+│   │   │       ├── squeeze.pth
+│   │   │       └── vgg.pth
+│   │   ├── source.txt
+│   │   └── summary.py
+│   └── metrics.py
+├── models
+│   ├── base.py
+│   ├── custom.py
+│   ├── espcn.py
+│   ├── net.py
+│   ├── sofvsr.py
+│   └── vespcn.py
+├── networks
+│   ├── base.py
+│   ├── custom.py
+│   ├── egvsr.py
+│   ├── espcn.py
+│   ├── __init__.py
+│   ├── sofvsr.py
+│   ├── tecogan.py
+│   └── vespcn.py
+├── README.md
+├── requirements.txt
+├── train_egvsr.py
+├── train_net.py
+├── utils.py
+└── weights
+    ├── egvsr.pth
+    ├── espcn.pth
+    ├── frvsr.pth
+    ├── sofvsr.pth
+    ├── tecogan.pth
+    └── vespcn.pth
+```
+
+The project is structured into the following directories:
+
+* `data/`: Contains data loading and processing modules, including paired (LR-HR) and unpaired data loaders for GAN training.
+* `metrics/`: Contains evaluation metrics implementation, including LPIPS (Learned Perceptual Image Patch Similarity) with multiple backbone options.
+* `models/`: Contains implementations of various VSR models including ESPCN, SOFVSR, and VESPCN.
+* `networks/`: Contains network architectures for different VSR approaches (TecoGAN, EGVSR, ESPCN, SOFVSR, VESPCN).
+* `weights/`: Contains pretrained weights for all implemented architectures.
+
+The project tree also contains several individual files:
+
+* `config.py`: Configuration settings for the project.
+* `train_egvsr.py`: Training script specifically for EGVSR model.
+* `train_net.py`: Training script for other architectures.
+* `utils.py`: Utility functions used across the project.
+
+## Implmented Architectures: 
+The repository currently supports the following VSR architectures. 
+* **TecoGAN**: Temporarily Coherent GAN
+* **EGVSR**: Enhanced/Extended GAN VSR
+* **ESPCN**: Efficient Sub-Pixel CNN
+* **SOFVSR**: Spatio-temporal Optical Flow VSR
+* **VESPCN**: Very Deep ESPCN
+
+## Installation and Usage: 
+### Step 1: Setup a virtualenv / conda environment. 
+For conda: 
+```bash
+$ conda create -n <env_name> 
+```
+
+For virtualenv:
+```bash
+$ python -m venv <env_name>
+```
+where `env_name` will be the name of the directory that you will use as the virtual environment. 
+
+### Step 2: Activate the environment. 
+For conda: 
+```bash
+$ conda install --file requirements.txt
+```
+
+For virualenv: 
+```bash
+$ pip install -r requirements.txt
+```
+
+### Step 3: Training
+You can run any of the two python (train_egvsr, train_net) files for running inference.
+
+train_egvsr:- runs inference for TecoGAN and the custom model. 
+
+train_net:- runs inference for ESPCN. 
+
 ## Benchmark One: 
 We will be comparing objective metrics for visual quality evaluation. This will be against a handful of other architectures like VESPCN, SOFVSR and DUF. 
 
@@ -51,3 +164,5 @@ the following datasets are listed below:
 
 ## License: 
 This project is covered by the MIT License, granting anyone to use any parts of this repository for any use whatsoever. Original credit of the code goes to the authors that developed the submodules. 
+
+We give credits to the original authors who authored the papers refered to in the literature review. 
