@@ -32,21 +32,22 @@ The next set of benchmarks will be specifically comparing TecoGAN and EGVSR, the
 of the art in video super-resolution. 
 
 What custom architecture are we using? 
+
 We are using a variant of the "TecoGAN" model, which uses a FNet architecture for the generator and a "spatio-temporal" discriminator. We modified the FNet 
 architecture to use Residual Blocks instead as they have better performance in terms of carrying the weights and maintaining gradient flow. The benchmarks for
 the following datasets are listed below: 
 
 | Dataset | Metric | TecoGAN | EGVSR | Our Model |
 |---------|--------|---------|-------|-----------|
-| Vid4 | Avg_LPIPS↓ | 0.156 | 0.138 | 0.150 |
-| | Avg_tOF↓ | 0.199 | 0.188 | 0.192 |
-| | Avg_tLP100↓ | 0.510 | 0.447 | 0.480 |
-| ToS3 | Avg_LPIPS↓ | 0.109 | 0.121 | 0.110 |
-| | Avg_tOF↓ | 0.134 | 0.138 | 0.138 |
+| Vid4 | Avg_LPIPS↓ | 0.156 | **0.138** | 0.150 |
+| | Avg_tOF↓ | 0.199 | **0.188** | 0.192 |
+| | Avg_tLP100↓ | 0.510 | **0.447** | 0.480 |
+| ToS3 | Avg_LPIPS↓ | **0.109** | 0.121 | 0.110 |
+| | Avg_tOF↓ | **0.134** | 0.138 | 0.138 |
 | | Avg_tLP100↓ | 0.211 | 0.221 | 0.217 |
-| GvT72 | Avg_LPIPS↓ | 0.069 | 0.072 | 0.070 |
-| | Avg_tOF↓ | 0.233 | 0.232 | 0.236 |
-| | Avg_tLP100↓ | 0.429 | 0.438 | 0.435 |
+| GvT72 | Avg_LPIPS↓ | 0.069 | 0.072 | **0.068** |
+| | Avg_tOF↓ | 0.233 | **0.232** | 0.236 |
+| | Avg_tLP100↓ | **0.429** | 0.438 | 0.435 |
 
 ## License: 
 This project is covered by the MIT License, granting anyone to use any parts of this repository for any use whatsoever. Original credit of the code goes to the authors that developed the submodules. 
