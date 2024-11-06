@@ -31,6 +31,11 @@ Here's the table converted to markdown format:
 The next set of benchmarks will be specifically comparing TecoGAN and EGVSR, the two tight competitors for being state 
 of the art in video super-resolution. 
 
+What custom architecture are we using? 
+We are using a variant of the "TecoGAN" model, which uses a FNet architecture for the generator and a "spatio-temporal" discriminator. We modified the FNet 
+architecture to use Residual Blocks instead as they have better performance in terms of carrying the weights and maintaining gradient flow. The benchmarks for
+the following datasets are listed below: 
+
 | Dataset | Metric | TecoGAN | EGVSR | Our Model |
 |---------|--------|---------|-------|-----------|
 | Vid4 | Avg_LPIPS↓ | 0.156 | 0.138 | 0.150 |

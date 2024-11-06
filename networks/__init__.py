@@ -35,6 +35,9 @@ def define_generator(opt):
     elif net_G_opt['name'].lower() == 'sofnet':  # SOFVSR generator
         from sofvsr import SOFNet
         net_G = SOFNet(scale=opt['scale'])
+    elif net_G_opt['name'].lower() == 'custom':
+        from models.custom import CustomGenerator
+        net_G = CustomGenerator(in_nc=net_G_opt['in_nc'])
 
     else:
         raise ValueError('Unrecognized generator: {}'.format(
